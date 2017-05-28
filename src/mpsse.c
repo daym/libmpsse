@@ -371,9 +371,9 @@ int SetMode(struct mpsse_context *mpsse, int endianess)
 			/* Set the idle pin states */
 			set_bits_low(mpsse, mpsse->pidle);
 	
-			/* All GPIO pins are outputs, set low */
-			mpsse->trish = 0xFF;
-			mpsse->gpioh = 0x00;
+			/* All GPIO pins are inputs, set high */
+			mpsse->trish = 0x00;
+			mpsse->gpioh = 0xff;
 	
 	                buf[i++] = SET_BITS_HIGH;
 	                buf[i++] = mpsse->gpioh;
@@ -1159,6 +1159,10 @@ int SetDirection(struct mpsse_context *mpsse, uint8_t direction)
                 	{
 				retval = MPSSE_OK;
 			}
+		} else {
+			mpsse->tris = direction;
+			retval = set_bits_low(mpsse, mpsse->pidle);
+			// TODO: also set_bits_high
 		}
 	}
 
@@ -1166,7 +1170,7 @@ int SetDirection(struct mpsse_context *mpsse, uint8_t direction)
 }
 
 /*
- * Sets the input/output value of all pins. For use in BITBANG mode only.
+ * Sets the input/output value of all pins.
  *
  * @mpsse - MPSSE context pointer.
  * @data  - Byte indicating bit hi/low value of each bit.
@@ -1185,6 +1189,8 @@ int WritePins(struct mpsse_context *mpsse, uint8_t data)
 			{
 				retval = MPSSE_OK;
 			}
+		} else {
+			retval = set_bits_low(mpsse, data);
 		}
 	}
     
@@ -1192,7 +1198,7 @@ int WritePins(struct mpsse_context *mpsse, uint8_t data)
 }
 
 /*
- * Reads the state of the chip's pins. For use in BITBANG mode only.
+ * Reads the state of the chip's pins.
  *
  * @mpsse - MPSSE context pointer.
  *

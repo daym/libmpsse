@@ -22,3 +22,5 @@
 }
 
 %include "mpsse.h"
+%include "stdint.i"
+
