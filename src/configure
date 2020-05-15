@@ -3521,13 +3521,14 @@ then
 		PYDEV="/usr/include/python$(python -V 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)m"
 	fi
 
-	for ac_header in $PYDEV/Python.h
+	save_CFLAGS=$CFLAGS
+	CFLAGS="-I$PYDEV $CFLAGS"
+	for ac_header in Python.h
 do :
-  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
-ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
-if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  ac_fn_c_check_header_mongrel "$LINENO" "Python.h" "ac_cv_header_Python_h" "$ac_includes_default"
+if test "x$ac_cv_header_Python_h" = xyes; then :
   cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+#define HAVE_PYTHON_H 1
 _ACEOF
 
 else
@@ -3536,6 +3537,7 @@ fi
 
 done
 
+	CFLAGS="$save_CFLAGS"
 
 	if ! test $PYLIB
 	then
